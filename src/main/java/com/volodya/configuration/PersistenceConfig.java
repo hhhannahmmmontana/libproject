@@ -47,6 +47,10 @@ public class PersistenceConfig {
 
         var jpaProperties = new Properties();
         jpaProperties.put("hibernate.hbm2ddl.auto", "validate");
+        jpaProperties.put(
+            "hibernate.physical_naming_strategy",
+            "org.hibernate.boot.model.naming.CamelCaseToUnderscoresNamingStrategy"
+        );
         factory.setJpaProperties(jpaProperties);
         return factory;
     }

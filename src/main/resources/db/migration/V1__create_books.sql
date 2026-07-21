@@ -1,6 +1,9 @@
 CREATE TABLE books (
     id UUID PRIMARY KEY,
-    name VARCHAR(128) NOT NULL
+    title VARCHAR(255) NOT NULL,
+    author VARCHAR(255) NOT NULL,
+    isbn VARCHAR(13) UNIQUE NOT NULL,
+    publication_year INT NOT NULL,
+    total_copies BIGINT NOT NULL,
+    available_copies BIGINT NOT NULL
 );
-
-INSERT INTO books (id, name) VALUES ('efa34dd5-0050-415f-9575-5838d84e7554', 'BOOK');
