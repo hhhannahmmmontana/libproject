@@ -33,6 +33,8 @@
         <jackson.version>2.22.1</jackson.version>
         <mapstruct.version>1.6.3</mapstruct.version>
         <jakarta.validation.version>3.1.1</jakarta.validation.version>
+
+        <springdoc.version>3.0.3</springdoc.version>
     </properties>
     <dependencies>
         <dependency>
@@ -113,6 +115,11 @@
             <version>${jakarta.validation.version}</version>
             <scope>compile</scope>
         </dependency>
+        <dependency>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-starter-webmvc-api</artifactId>
+            <version>3.0.3</version>
+        </dependency>
     </dependencies>
     <build>
         <plugins>
@@ -123,6 +130,7 @@
                 <configuration>
                     <compilerArgs>
                         <arg>--enable-preview</arg>
+                        <arg>-parameters</arg>
                     </compilerArgs>
                     <annotationProcessorPaths>
                         <path>

@@ -11,7 +11,7 @@ import org.springframework.core.env.Environment;
 @Configuration
 @PropertySources({
     @PropertySource("classpath:application.properties"),
-    @PropertySource(value = "classpath:application-${spring.profiles.active}.properties", ignoreResourceNotFound = true)
+    @PropertySource(value = "classpath:application-${profiles.active}.properties", ignoreResourceNotFound = true)
 })
 public class PropertiesConfig {
 
