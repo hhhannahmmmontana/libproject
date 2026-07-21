@@ -1,0 +1,6 @@
+CREATE TABLE books (
+    id UUID PRIMARY KEY,
+    name VARCHAR(128) NOT NULL
+);
+
+INSERT INTO books (id, name) VALUES ('efa34dd5-0050-415f-9575-5838d84e7554', 'BOOK');

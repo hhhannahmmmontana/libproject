@@ -16,11 +16,21 @@
         <maven.exec.version>3.6.3</maven.exec.version>
         <maven.exec.mainClass>Application</maven.exec.mainClass>
 
+        <lombok.version>1.18.46</lombok.version>
+
         <junit.version>4.13.2</junit.version>
 
         <tomcat.embed.version>11.0.24</tomcat.embed.version>
 
         <spring.framework.version>7.0.8</spring.framework.version>
+        <spring.data.version>4.1.0</spring.data.version>
+
+        <jakarta.persistence.version>3.2.0</jakarta.persistence.version>
+        <h2.version>2.4.240</h2.version>
+        <hibernate.version>7.4.4.Final</hibernate.version>
+        <flyway.version>12.10.0</flyway.version>
+
+        <jackson.version>2.22.1</jackson.version>
     </properties>
     <dependencies>
         <dependency>
@@ -47,6 +57,48 @@
             <version>${spring.framework.version}</version>
             <scope>compile</scope>
         </dependency>
+        <dependency>
+            <groupId>org.springframework.data</groupId>
+            <artifactId>spring-data-jpa</artifactId>
+            <version>${spring.data.version}</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>jakarta.persistence</groupId>
+            <artifactId>jakarta.persistence-api</artifactId>
+            <version>${jakarta.persistence.version}</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <version>${h2.version}</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.hibernate.orm</groupId>
+            <artifactId>hibernate-core</artifactId>
+            <version>${hibernate.version}</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.flywaydb</groupId>
+            <artifactId>flyway-core</artifactId>
+            <version>${flyway.version}</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>${lombok.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>${jackson.version}</version>
+            <scope>compile</scope>
+        </dependency>
     </dependencies>
     <build>
         <plugins>
@@ -58,6 +110,13 @@
                     <compilerArgs>
                         <arg>--enable-preview</arg>
                     </compilerArgs>
+                    <annotationProcessorPaths>
+                        <path>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                            <version>${lombok.version}</version>
+                        </path>
+                    </annotationProcessorPaths>
                 </configuration>
             </plugin>
 
