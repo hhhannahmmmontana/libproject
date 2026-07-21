@@ -14,8 +14,8 @@ import java.util.UUID;
 public class BookJpaEntity {
 
     @Id
-    UUID id;
+    private UUID id;
 
     @Column(nullable = false)
-    String name;
+    private String name;
 }
