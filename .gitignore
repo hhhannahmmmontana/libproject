@@ -3,3 +3,4 @@ build
 target
 .kotlin
 .idea
+tomcat*
