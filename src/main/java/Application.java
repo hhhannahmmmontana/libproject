@@ -1,8 +1,8 @@
 import com.volodya.application.configurationproperties.ServerConfigurationProperties;
 import com.volodya.configuration.AppConfig;
-import com.volodya.configuration.OpenApiConfig;
 import com.volodya.configuration.PersistenceConfig;
 import com.volodya.configuration.PropertiesConfig;
+import com.volodya.configuration.ValidationConfig;
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.startup.Tomcat;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
@@ -20,7 +20,7 @@ void main() throws LifecycleException {
     var tomcatContext = tomcat.addContext("", null);
 
     var springContext = new AnnotationConfigWebApplicationContext();
-    springContext.register(AppConfig.class, PersistenceConfig.class, OpenApiConfig.class);
+    springContext.register(AppConfig.class, PersistenceConfig.class, ValidationConfig.class);
     var dispatcherServlet = new DispatcherServlet(springContext);
 
     var servletWrapper = Tomcat.addServlet(tomcatContext, "dispatcherServlet", dispatcherServlet);
