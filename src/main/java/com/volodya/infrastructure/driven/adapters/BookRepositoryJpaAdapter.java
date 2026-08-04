@@ -7,6 +7,7 @@ import com.volodya.domain.exceptions.IsbnAlreadyExistsException;
 import com.volodya.domain.repositories.BookRepository;
 import com.volodya.infrastructure.driven.mappers.BookJpaMapper;
 import com.volodya.infrastructure.driven.repositories.BookJpaRepository;
+import com.volodya.infrastructure.driven.repositories.BookSpecifications;
 import lombok.RequiredArgsConstructor;
 import org.jspecify.annotations.Nullable;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -74,12 +75,13 @@ public final class BookRepositoryJpaAdapter implements BookRepository {
         @Nullable Long minAvailableCopies,
         @Nullable Long maxAvailableCopies
     ) {
-        return jpaRepository.findByFilters(
-                minYear != null ? intYearMapper.toInt(minYear) : null,
-                maxYear != null ? intYearMapper.toInt(maxYear) : null,
-                minAvailableCopies,
-                maxAvailableCopies
-            )
+        var specifications = BookSpecifications.filter(
+            minYear,
+            maxYear,
+            minAvailableCopies,
+            maxAvailableCopies
+        );
+        return jpaRepository.findAll(specifications)
             .stream()
             .map(mapper::toDomain)
             .toList();
