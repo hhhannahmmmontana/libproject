@@ -11,7 +11,7 @@ import java.util.UUID;
 @Entity
 @Table(name = "books")
 @Data
-public class BookJpaEntity {
+public final class BookJpaEntity {
 
     @Id
     private UUID id;

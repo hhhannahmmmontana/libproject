@@ -166,7 +166,7 @@
                         <argument>--enable-preview</argument>
                         <argument>-classpath</argument>
                         <classpath/>
-                        <argument>${maven.exec.mainClass}</argument>
+                        <mainClass>${maven.exec.mainClass}</mainClass>
                     </arguments>
                 </configuration>
             </plugin>

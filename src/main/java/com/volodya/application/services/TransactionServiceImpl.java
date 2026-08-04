@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 import java.util.function.Supplier;
 
 @Service
-public class TransactionServiceImpl implements TransactionService {
+public final class TransactionServiceImpl implements TransactionService {
 
     @Override
     @Transactional

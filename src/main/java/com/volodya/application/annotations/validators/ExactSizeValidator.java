@@ -6,7 +6,7 @@ import jakarta.validation.ConstraintValidatorContext;
 
 import java.util.Arrays;
 
-public class ExactSizeValidator implements ConstraintValidator<ExactSize, String> {
+public final class ExactSizeValidator implements ConstraintValidator<ExactSize, String> {
 
     private int[] requiredLength;
 

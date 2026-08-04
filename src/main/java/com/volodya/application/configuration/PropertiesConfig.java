@@ -1,4 +1,4 @@
-package com.volodya.configuration;
+package com.volodya.application.configuration;
 
 import com.volodya.application.configurationproperties.ServerConfigurationProperties;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +13,7 @@ import org.springframework.core.env.Environment;
     @PropertySource("classpath:application.properties"),
     @PropertySource(value = "classpath:application-${profiles.active}.properties", ignoreResourceNotFound = true)
 })
-public class PropertiesConfig {
+public abstract class PropertiesConfig {
 
     @Autowired
     private Environment env;

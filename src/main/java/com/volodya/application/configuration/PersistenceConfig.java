@@ -1,4 +1,4 @@
-package com.volodya.configuration;
+package com.volodya.application.configuration;
 
 import jakarta.persistence.EntityManagerFactory;
 import org.flywaydb.core.Flyway;
@@ -20,7 +20,7 @@ import java.util.Properties;
 @Configuration
 @EnableTransactionManagement
 @EnableJpaRepositories("com.volodya.infrastructure.driven.repositories")
-public class PersistenceConfig {
+public abstract class PersistenceConfig {
 
     @Bean
     public DataSource dataSource() {

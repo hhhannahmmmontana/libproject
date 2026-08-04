@@ -5,7 +5,7 @@ import org.springframework.stereotype.Component;
 import java.time.Year;
 
 @Component
-public class IntYearMapper {
+public final class IntYearMapper {
 
     public int toInt(Year year) {
         return year.getValue();

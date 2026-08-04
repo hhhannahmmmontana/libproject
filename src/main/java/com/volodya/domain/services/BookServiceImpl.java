@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.UUID;
 
 @RequiredArgsConstructor
-public class BookServiceImpl implements BookService {
+public final class BookServiceImpl implements BookService {
 
     private final BookRepository bookRepository;
     private final TransactionService transactionService;

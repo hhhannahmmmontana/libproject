@@ -1,9 +1,10 @@
+import com.volodya.application.configuration.AppConfig;
+import com.volodya.application.configuration.PersistenceConfig;
+import com.volodya.application.configuration.PropertiesConfig;
+import com.volodya.application.configuration.ValidationConfig;
 import com.volodya.application.configurationproperties.ServerConfigurationProperties;
-import com.volodya.configuration.AppConfig;
-import com.volodya.configuration.PersistenceConfig;
-import com.volodya.configuration.PropertiesConfig;
-import com.volodya.configuration.ValidationConfig;
 import org.apache.catalina.LifecycleException;
+import org.apache.catalina.core.StandardHost;
 import org.apache.catalina.startup.Tomcat;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
@@ -18,6 +19,8 @@ void main() throws LifecycleException {
     tomcat.setPort(properties.port());
     tomcat.getConnector();
     var tomcatContext = tomcat.addContext("", null);
+    var host = (StandardHost) tomcat.getHost();
+    host.setErrorReportValveClass(null);
 
     var springContext = new AnnotationConfigWebApplicationContext();
     springContext.register(AppConfig.class, PersistenceConfig.class, ValidationConfig.class);

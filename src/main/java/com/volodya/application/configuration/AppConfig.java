@@ -1,4 +1,4 @@
-package com.volodya.configuration;
+package com.volodya.application.configuration;
 
 import com.volodya.domain.repositories.BookRepository;
 import com.volodya.domain.services.BookService;
@@ -12,7 +12,7 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 @Configuration
 @ComponentScan("com.volodya")
 @EnableWebMvc
-public class AppConfig {
+public abstract class AppConfig {
 
     @Bean
     public BookService bookService(

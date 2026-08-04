@@ -6,7 +6,7 @@ import jakarta.validation.ConstraintValidatorContext;
 
 import java.math.BigDecimal;
 
-public class NotNegativeValidator implements ConstraintValidator<NotNegative, Number> {
+public final class NotNegativeValidator implements ConstraintValidator<NotNegative, Number> {
 
     @Override
     public boolean isValid(Number number, ConstraintValidatorContext constraintValidatorContext) {

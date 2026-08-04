@@ -18,7 +18,7 @@ import java.util.UUID;
 
 @Repository
 @RequiredArgsConstructor
-public class BookRepositoryJpaAdapter implements BookRepository {
+public final class BookRepositoryJpaAdapter implements BookRepository {
 
     private final BookJpaRepository jpaRepository;
     private final BookJpaMapper mapper;

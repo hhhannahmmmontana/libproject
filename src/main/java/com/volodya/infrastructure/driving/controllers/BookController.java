@@ -21,7 +21,7 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/books")
 @RequiredArgsConstructor
-public class BookController {
+public final class BookController {
 
     private final BookService bookService;
     private final BookDtoMapper mapper;
