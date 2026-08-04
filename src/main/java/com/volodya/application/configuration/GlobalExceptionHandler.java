@@ -1,6 +1,8 @@
 package com.volodya.application.configuration;
 
 import com.volodya.domain.exceptions.BookNotFoundException;
+import com.volodya.domain.exceptions.IsbnAlreadyExistsException;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -12,12 +14,23 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 @RestControllerAdvice
 public final class GlobalExceptionHandler {
 
+    @Value("${application.name}")
+    private String applicationName;
+
     @ExceptionHandler(BookNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorResponse handleBookNotFoundException(
         BookNotFoundException ex
     ) {
-        return ErrorResponse.fromException(ex);
+        return createErrorResponseFromException(ex);
+    }
+
+    @ExceptionHandler(IsbnAlreadyExistsException.class)
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public ErrorResponse handleIsbnAlreadyExistsException(
+        IsbnAlreadyExistsException ex
+    ) {
+        return createErrorResponseFromException(ex);
     }
 
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
@@ -25,7 +38,7 @@ public final class GlobalExceptionHandler {
     public ErrorResponse handleMethodArgumentTypeMismatchException(
         MethodArgumentTypeMismatchException ex
     ) {
-        return ErrorResponse.fromException(ex);
+        return createErrorResponseFromException(ex);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
@@ -33,7 +46,7 @@ public final class GlobalExceptionHandler {
     public ErrorResponse handleMethodArgumentNotValidException(
         MethodArgumentNotValidException ex
     ) {
-        return ErrorResponse.fromException(ex);
+        return createErrorResponseFromException(ex);
     }
 
     @ExceptionHandler(HandlerMethodValidationException.class)
@@ -41,7 +54,7 @@ public final class GlobalExceptionHandler {
     public ErrorResponse handleHandlerMethodValidationException(
         HandlerMethodValidationException ex
     ) {
-        return ErrorResponse.fromException(ex);
+        return createErrorResponseFromException(ex);
     }
 
     @ExceptionHandler(Exception.class)
@@ -49,6 +62,12 @@ public final class GlobalExceptionHandler {
     public ErrorResponse handleException(
         Exception ex
     ) {
-        return ErrorResponse.fromException(ex);
+        return createErrorResponseFromException(ex);
+    }
+
+    private ErrorResponse createErrorResponseFromException(
+        Exception ex
+    ) {
+        return ErrorResponse.fromException(applicationName, ex);
     }
 }

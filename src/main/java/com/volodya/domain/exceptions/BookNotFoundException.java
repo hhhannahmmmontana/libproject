@@ -2,7 +2,7 @@ package com.volodya.domain.exceptions;
 
 import java.util.UUID;
 
-public final class BookNotFoundException extends LibraryException {
+public final class BookNotFoundException extends LibraryUncheckedException {
 
     public BookNotFoundException(UUID id) {
         super("Book with ID " + id + " not found");

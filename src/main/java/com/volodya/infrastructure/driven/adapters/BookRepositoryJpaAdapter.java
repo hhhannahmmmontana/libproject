@@ -3,11 +3,13 @@ package com.volodya.infrastructure.driven.adapters;
 import com.volodya.application.mappers.IntYearMapper;
 import com.volodya.domain.entities.Book;
 import com.volodya.domain.exceptions.BookNotFoundException;
+import com.volodya.domain.exceptions.IsbnAlreadyExistsException;
 import com.volodya.domain.repositories.BookRepository;
 import com.volodya.infrastructure.driven.mappers.BookJpaMapper;
 import com.volodya.infrastructure.driven.repositories.BookJpaRepository;
 import lombok.RequiredArgsConstructor;
 import org.jspecify.annotations.Nullable;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Repository;
 
@@ -27,7 +29,11 @@ public final class BookRepositoryJpaAdapter implements BookRepository {
     @Override
     public Book create(Book book) {
         var entity = mapper.toJpa(book);
-        return mapper.toDomain(jpaRepository.save(entity));
+        try {
+            return mapper.toDomain(jpaRepository.save(entity));
+        } catch (DataIntegrityViolationException ex) {
+            throw new IsbnAlreadyExistsException(book.isbn());
+        }
     }
 
     @Override

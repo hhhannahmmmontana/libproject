@@ -23,7 +23,12 @@ void main() throws LifecycleException {
     host.setErrorReportValveClass(null);
 
     var springContext = new AnnotationConfigWebApplicationContext();
-    springContext.register(AppConfig.class, PersistenceConfig.class, ValidationConfig.class);
+    springContext.register(
+        AppConfig.class,
+        PropertiesConfig.class,
+        PersistenceConfig.class,
+        ValidationConfig.class
+    );
     var dispatcherServlet = new DispatcherServlet(springContext);
 
     var servletWrapper = Tomcat.addServlet(tomcatContext, "dispatcherServlet", dispatcherServlet);
