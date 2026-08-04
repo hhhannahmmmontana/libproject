@@ -1,5 +1,8 @@
 package com.volodya.application.configuration;
 
+import com.volodya.domain.events.EventListener;
+import com.volodya.domain.events.EventNotifier;
+import com.volodya.domain.events.EventNotifierImpl;
 import com.volodya.domain.repositories.BookRepository;
 import com.volodya.domain.services.BookService;
 import com.volodya.domain.services.BookServiceImpl;
@@ -9,19 +12,30 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
+import java.util.List;
+
 @Configuration
 @ComponentScan("com.volodya")
 @EnableWebMvc
 public abstract class AppConfig {
 
     @Bean
+    public EventNotifier eventNotifier(
+        List<EventListener> eventListeners
+    ) {
+        return new EventNotifierImpl(eventListeners);
+    }
+
+    @Bean
     public BookService bookService(
         BookRepository bookRepository,
-        TransactionService transactionService
+        TransactionService transactionService,
+        EventNotifier eventNotifier
     ) {
         return new BookServiceImpl(
             bookRepository,
-            transactionService
+            transactionService,
+            eventNotifier
         );
     }
 }

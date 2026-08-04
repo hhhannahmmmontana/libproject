@@ -1,6 +1,10 @@
 package com.volodya.domain.services;
 
 import com.volodya.domain.entities.Book;
+import com.volodya.domain.events.EventNotifier;
+import com.volodya.domain.events.events.CreateBookEvent;
+import com.volodya.domain.events.events.DeleteBookEvent;
+import com.volodya.domain.events.events.PatchBookEvent;
 import com.volodya.domain.exceptions.BookNotFoundException;
 import com.volodya.domain.repositories.BookRepository;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +19,7 @@ public final class BookServiceImpl implements BookService {
 
     private final BookRepository bookRepository;
     private final TransactionService transactionService;
+    private final EventNotifier eventNotifier;
 
     @Override
     public Book create(
@@ -33,7 +38,9 @@ public final class BookServiceImpl implements BookService {
             totalCopies,
             availableCopies
         );
-        return bookRepository.create(book);
+        book = bookRepository.create(book);
+        eventNotifier.notifyListeners(new CreateBookEvent(book));
+        return book;
     }
 
     @Override
@@ -81,22 +88,27 @@ public final class BookServiceImpl implements BookService {
     @Override
     public Book patch(UUID id, @Nullable Long totalCopies, @Nullable Long availableCopies) {
         return transactionService.supplyTransactional(() -> {
-            var book = bookRepository
+            var oldBook = bookRepository
                 .findByIdForUpdate(id)
                 .orElseThrow(() -> new BookNotFoundException(id));
 
+            var newBook = oldBook;
             if (totalCopies != null) {
-                book = book.withTotalCopies(totalCopies);
+                newBook = newBook.withTotalCopies(totalCopies);
             }
             if (availableCopies != null) {
-                book = book.withAvailableCopies(availableCopies);
+                newBook = newBook.withAvailableCopies(availableCopies);
             }
-            return book;
+
+            newBook = bookRepository.update(newBook);
+            eventNotifier.notifyListeners(new PatchBookEvent(oldBook, newBook));
+            return newBook;
         });
     }
 
     @Override
     public void deleteById(UUID id) {
         bookRepository.deleteById(id);
+        eventNotifier.notifyListeners(new DeleteBookEvent(id));
     }
 }
