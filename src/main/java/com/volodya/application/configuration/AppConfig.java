@@ -1,5 +1,6 @@
 package com.volodya.application.configuration;
 
+import com.volodya.application.configurationproperties.HeapDumpConfigurationProperties;
 import com.volodya.domain.events.EventListener;
 import com.volodya.domain.events.EventNotifier;
 import com.volodya.domain.events.EventNotifierImpl;
@@ -7,17 +8,25 @@ import com.volodya.domain.repositories.BookRepository;
 import com.volodya.domain.services.BookService;
 import com.volodya.domain.services.BookServiceImpl;
 import com.volodya.domain.services.TransactionService;
+import com.volodya.infrastructure.driving.actuator.factories.ActuatorRecordsFactory;
+import com.volodya.infrastructure.driving.actuator.factories.DevStageActuatorRecordsFactory;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
+import javax.sql.DataSource;
 import java.util.List;
 
 @Configuration
 @ComponentScan("com.volodya")
 @EnableWebMvc
 public abstract class AppConfig {
+
+    @Value("${profiles.active}")
+    private String activeProfile;
 
     @Bean
     public EventNotifier eventNotifier(
@@ -37,5 +46,21 @@ public abstract class AppConfig {
             transactionService,
             eventNotifier
         );
+    }
+
+    @Bean
+    public ActuatorRecordsFactory actuatorRecordsFactory(
+        HeapDumpConfigurationProperties heapDumpConfigurationProperties,
+        DataSource dataSource,
+        ApplicationContext applicationContext
+    ) {
+        return switch (activeProfile) {
+            case "dev" -> new DevStageActuatorRecordsFactory(
+                heapDumpConfigurationProperties,
+                dataSource,
+                applicationContext
+            );
+            default -> throw new IllegalStateException("Unexpected value: " + activeProfile);
+        };
     }
 }

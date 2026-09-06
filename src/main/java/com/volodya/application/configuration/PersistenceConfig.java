@@ -1,10 +1,13 @@
 package com.volodya.application.configuration;
 
+import com.volodya.application.configurationproperties.DatabaseConfigurationProperties;
 import jakarta.persistence.EntityManagerFactory;
 import org.flywaydb.core.Flyway;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.DependsOn;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 import org.springframework.orm.jpa.JpaTransactionManager;
@@ -14,7 +17,8 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import javax.sql.DataSource;
-import java.util.List;
+import java.sql.Driver;
+import java.util.Objects;
 import java.util.Properties;
 
 @Configuration
@@ -22,21 +26,42 @@ import java.util.Properties;
 @EnableJpaRepositories("com.volodya.infrastructure.driven.repositories")
 public abstract class PersistenceConfig {
 
+    private final static String H2_EMBED_TYPE = "h2-embed";
+
     @Bean
-    public DataSource dataSource() {
-        var builder = new EmbeddedDatabaseBuilder();
-        return builder.setType(EmbeddedDatabaseType.H2).build();
+    public DataSource dataSource(
+        DatabaseConfigurationProperties config
+    ) throws ClassNotFoundException {
+        if (Objects.equals(config.dbType(), H2_EMBED_TYPE)) {
+            var builder = new EmbeddedDatabaseBuilder();
+            return builder.setType(EmbeddedDatabaseType.H2).build();
+        } else {
+            Class<? extends Driver> driverClass = Class.forName(
+                config.dbDriverClassName(),
+                true,
+                PersistenceConfig.class.getClassLoader()
+            ).asSubclass(Driver.class);
+
+            var dataSource = new SimpleDriverDataSource();
+            dataSource.setDriverClass(driverClass);
+            dataSource.setUrl("jdbc:" + config.dbType() + "://" + config.dbHost() + ':' + config.dbPort() + "/" + config.dbName());
+            dataSource.setUsername(config.dbUsername());
+            dataSource.setPassword(config.dbPassword());
+            return dataSource;
+        }
+    }
+
+    @Bean(initMethod = "migrate")
+    public Flyway flyway(DataSource dataSource) {
+        return Flyway.configure(PersistenceConfig.class.getClassLoader())
+            .dataSource(dataSource)
+            .locations("classpath:db/migration")
+            .load();
     }
 
     @Bean
-    public LocalContainerEntityManagerFactoryBean entityManagerFactory(
-        DataSource dataSource,
-        List<Flyway> flywayBeans
-    ) {
-        for (Flyway flyway : flywayBeans) {
-            flyway.migrate();
-        }
-
+    @DependsOn("flyway")
+    public LocalContainerEntityManagerFactoryBean entityManagerFactory(DataSource dataSource) {
         var vendorAdapter = new HibernateJpaVendorAdapter();
         vendorAdapter.setGenerateDdl(false);
 
@@ -60,13 +85,5 @@ public abstract class PersistenceConfig {
         JpaTransactionManager txManager = new JpaTransactionManager();
         txManager.setEntityManagerFactory(entityManagerFactory);
         return txManager;
-    }
-
-    @Bean
-    public Flyway flyway(DataSource dataSource) {
-        return Flyway.configure()
-            .dataSource(dataSource)
-            .locations("classpath:db/migration")
-            .load();
     }
 }
