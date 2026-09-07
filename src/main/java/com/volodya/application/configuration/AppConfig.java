@@ -20,7 +20,6 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 import javax.sql.DataSource;
 import java.util.List;
-import java.util.Optional;
 
 @Configuration
 @ComponentScan("com.volodya")
@@ -52,13 +51,12 @@ public abstract class AppConfig {
 
     @Bean
     public ActuatorRecordsFactory actuatorRecordsFactory(
-        Optional<HeapDumpConfigurationProperties> heapDumpConfigurationProperties,
         DataSource dataSource,
         ApplicationContext applicationContext
     ) {
         return switch (activeProfile) {
             case "dev" -> new DevStageActuatorRecordsFactory(
-                heapDumpConfigurationProperties.get(),
+                applicationContext.getBean(HeapDumpConfigurationProperties.class),
                 dataSource,
                 applicationContext
             );
