@@ -1,5 +1,6 @@
 package com.volodya.application.configuration;
 
+import com.volodya.application.configurationproperties.ApplicationInfoConfigurationProperties;
 import com.volodya.application.configurationproperties.HeapDumpConfigurationProperties;
 import com.volodya.domain.events.EventListener;
 import com.volodya.domain.events.EventNotifier;
@@ -60,8 +61,11 @@ public abstract class AppConfig {
                 dataSource,
                 applicationContext
             );
-            case "int" -> new IntStageActuatorRecordsFactory();
-            default -> throw new IllegalStateException("Unexpected value: " + activeProfile);
+            case "int" -> new IntStageActuatorRecordsFactory(
+                dataSource,
+                applicationContext.getBean(ApplicationInfoConfigurationProperties.class)
+            );
+            default -> new ActuatorRecordsFactory() {};
         };
     }
 }

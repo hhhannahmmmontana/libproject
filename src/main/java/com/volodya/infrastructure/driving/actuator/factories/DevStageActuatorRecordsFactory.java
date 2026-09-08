@@ -50,13 +50,9 @@ public final class DevStageActuatorRecordsFactory implements ActuatorRecordsFact
                 entry("mode", metadata.getURL().contains(":mem:") ? "IN-MEMORY" : "FILE-BASED"),
                 entry("latencyMs", latency)
             );
-            return Optional.of(new HealthResponse(
-                ApplicationStatus.UP,
-                details
-            ));
+            return Optional.of(HealthResponse.up(details));
         } catch (SQLException ex) {
-            return Optional.of(new HealthResponse(
-                ApplicationStatus.DOWN,
+            return Optional.of(HealthResponse.down(
                 Map.of("error", ex.getMessage())
             ));
         }

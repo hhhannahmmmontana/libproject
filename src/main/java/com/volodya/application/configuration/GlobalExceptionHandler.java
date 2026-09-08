@@ -1,9 +1,10 @@
 package com.volodya.application.configuration;
 
+import com.volodya.application.configurationproperties.ApplicationInfoConfigurationProperties;
 import com.volodya.application.exceptions.EndpointNotFoundException;
 import com.volodya.domain.exceptions.BookNotFoundException;
 import com.volodya.domain.exceptions.IsbnAlreadyExistsException;
-import org.springframework.beans.factory.annotation.Value;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.server.ServletServerHttpRequest;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -15,10 +16,10 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 import org.springframework.web.servlet.NoHandlerFoundException;
 
 @RestControllerAdvice
+@RequiredArgsConstructor
 public final class GlobalExceptionHandler {
 
-    @Value("${application.name}")
-    private String applicationName;
+    private final ApplicationInfoConfigurationProperties applicationInfo;
 
     @ExceptionHandler(BookNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
@@ -92,6 +93,6 @@ public final class GlobalExceptionHandler {
     private ErrorResponse createErrorResponseFromException(
         Exception ex
     ) {
-        return ErrorResponse.fromException(applicationName, ex);
+        return ErrorResponse.fromException(applicationInfo.name(), ex);
     }
 }

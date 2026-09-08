@@ -1,5 +1,6 @@
 package com.volodya.application.configuration;
 
+import com.volodya.application.configurationproperties.ApplicationInfoConfigurationProperties;
 import com.volodya.application.configurationproperties.DatabaseConfigurationProperties;
 import com.volodya.application.configurationproperties.HeapDumpConfigurationProperties;
 import com.volodya.application.configurationproperties.ServerConfigurationProperties;
@@ -16,7 +17,8 @@ import java.util.Objects;
 @Configuration
 @PropertySources({
     @PropertySource("classpath:application.properties"),
-    @PropertySource(value = "classpath:application-${profiles.active}.properties", ignoreResourceNotFound = true)
+    @PropertySource(value = "classpath:application-${profiles.active}.properties", ignoreResourceNotFound = true),
+    @PropertySource(value = "classpath:git.properties")
 })
 public abstract class PropertiesConfig {
 
@@ -52,6 +54,16 @@ public abstract class PropertiesConfig {
             env.getProperty("db.port"),
             env.getProperty("db.username"),
             env.getProperty("db.password")
+        );
+    }
+
+    @Bean
+    public ApplicationInfoConfigurationProperties applicationInfoConfigurationProperties() {
+        return new ApplicationInfoConfigurationProperties(
+            env.getProperty("application.name"),
+            env.getProperty("application.version"),
+            env.getProperty("git.commit.id.abbrev"),
+            env.getProperty("application.build.time")
         );
     }
 }

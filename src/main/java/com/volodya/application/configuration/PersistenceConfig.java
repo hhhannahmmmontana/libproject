@@ -1,6 +1,7 @@
 package com.volodya.application.configuration;
 
 import com.volodya.application.configurationproperties.DatabaseConfigurationProperties;
+import com.zaxxer.hikari.HikariDataSource;
 import jakarta.persistence.EntityManagerFactory;
 import org.flywaydb.core.Flyway;
 import org.springframework.context.annotation.Bean;
@@ -47,7 +48,9 @@ public abstract class PersistenceConfig {
             dataSource.setUrl("jdbc:" + config.dbType() + "://" + config.dbHost() + ':' + config.dbPort() + "/" + config.dbName());
             dataSource.setUsername(config.dbUsername());
             dataSource.setPassword(config.dbPassword());
-            return dataSource;
+            var hikariDataSource = new HikariDataSource();
+            hikariDataSource.setDataSource(dataSource);
+            return hikariDataSource;
         }
     }
 

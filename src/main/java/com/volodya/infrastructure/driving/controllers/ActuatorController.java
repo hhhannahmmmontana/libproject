@@ -1,10 +1,7 @@
 package com.volodya.infrastructure.driving.controllers;
 
 import com.volodya.application.exceptions.EndpointNotFoundException;
-import com.volodya.infrastructure.driving.actuator.entities.BeansResponse;
-import com.volodya.infrastructure.driving.actuator.entities.EnvResponse;
-import com.volodya.infrastructure.driving.actuator.entities.HealthResponse;
-import com.volodya.infrastructure.driving.actuator.entities.MetricsResponse;
+import com.volodya.infrastructure.driving.actuator.entities.*;
 import com.volodya.infrastructure.driving.actuator.factories.ActuatorRecordsFactory;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -64,6 +61,11 @@ public final class ActuatorController {
         } catch (IOException ex) {
             throw new RuntimeException(ex);
         }
+    }
+
+    @GetMapping("/info")
+    public ResponseEntity<InfoResponse> infoResponse(HttpServletRequest request) {
+        return toResponseEntity(actuatorRecordsFactory.createInfoResponse(), request);
     }
 
     private static <T> ResponseEntity<T> toResponseEntity(
