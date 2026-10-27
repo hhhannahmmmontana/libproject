@@ -4,6 +4,7 @@ import com.volodya.libproject.domain.BookService;
 import com.volodya.libproject.domain.dto.BookDto;
 import com.volodya.libproject.presentation.requests.books.CreateBookRequest;
 import com.volodya.libproject.presentation.requests.books.PatchBookRequest;
+import jakarta.validation.constraints.Size;
 import jakarta.websocket.server.PathParam;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -37,7 +38,11 @@ public final class BookController {
     }
 
     @GetMapping("/isbn/{isbn}")
-    public ResponseEntity<BookDto> getBookById(@PathParam("isbn") String isbn) {
+    public ResponseEntity<BookDto> getBookById(
+        @PathParam("isbn")
+        @Size(min = 10, max = 13)
+        String isbn
+    ) {
         return ResponseEntity.ok(bookService.getBookByIsbn(isbn));
     }
 
