@@ -4,14 +4,17 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import org.springframework.data.annotation.Version;
 
 import java.time.Year;
 import java.util.UUID;
 
 @Entity
 @Table(name = "books")
-@AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
@@ -37,4 +40,25 @@ public final class BookEntity {
 
     @Column(nullable = false)
     private Long availableCopies;
+
+    @Version
+    private Long version;
+
+    public BookEntity(
+        UUID id,
+        String title,
+        String author,
+        String isbn,
+        Year publicationYear,
+        long totalCopies,
+        long availableCopies
+    ) {
+        this.id = id;
+        this.title = title;
+        this.author = author;
+        this.isbn = isbn;
+        this.publicationYear = publicationYear;
+        this.totalCopies = totalCopies;
+        this.availableCopies = availableCopies;
+    }
 }

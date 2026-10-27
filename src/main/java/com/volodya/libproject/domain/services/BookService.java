@@ -1,4 +1,4 @@
-package com.volodya.libproject.domain;
+package com.volodya.libproject.domain.services;
 
 import com.volodya.libproject.domain.dto.BookDto;
 import com.volodya.libproject.domain.entities.Isbn;
@@ -64,7 +64,7 @@ public class BookService {
         @Nullable Long totalCopies,
         @Nullable Long availableCopies
     ) {
-        var book = bookJpaRepository.findById(id)
+        var book = bookJpaRepository.findForUpdateById(id)
             .orElseThrow(() -> new BookNotFoundException("id", id.toString()));
 
         if (title != null) {

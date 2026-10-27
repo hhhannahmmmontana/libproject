@@ -1,8 +1,8 @@
 package com.volodya.libproject.presentation.controllers;
 
-import com.volodya.libproject.domain.BookService;
 import com.volodya.libproject.domain.dto.BookDto;
 import com.volodya.libproject.domain.entities.Isbn;
+import com.volodya.libproject.domain.services.BookService;
 import com.volodya.libproject.presentation.requests.books.CreateBookRequest;
 import com.volodya.libproject.presentation.requests.books.PatchBookRequest;
 import jakarta.validation.constraints.Size;

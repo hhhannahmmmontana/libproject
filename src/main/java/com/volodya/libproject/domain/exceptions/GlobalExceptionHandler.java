@@ -1,0 +1,45 @@
+package com.volodya.libproject.domain.exceptions;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
+
+import java.time.Instant;
+
+@RestControllerAdvice
+public class GlobalExceptionHandler {
+
+    @Value("${spring.application.name}")
+    private String serviceName;
+
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<ErrorResponse> handleDataIntegrityViolationException(
+        DataIntegrityViolationException ex
+    ) {
+        return errorResponseFromException(ex, HttpStatus.CONFLICT, "Entity already exists");
+    }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ErrorResponse> handleException(Exception ex) {
+        return errorResponseFromException(ex, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    private ResponseEntity<ErrorResponse> errorResponseFromException(Exception ex, HttpStatus httpStatus) {
+        return errorResponseFromException(ex, httpStatus, ex.getLocalizedMessage());
+    }
+
+    private ResponseEntity<ErrorResponse> errorResponseFromException(
+        Exception ex, HttpStatus httpStatus, String message
+    ) {
+        return new ResponseEntity<>(new ErrorResponse(
+            serviceName,
+            httpStatus.name(),
+            ex.getClass().getSimpleName(),
+            message,
+            Instant.now()
+        ), httpStatus);
+    }
+}
