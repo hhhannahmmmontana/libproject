@@ -2,6 +2,7 @@ package com.volodya.libproject.presentation.controllers;
 
 import com.volodya.libproject.domain.BookService;
 import com.volodya.libproject.domain.dto.BookDto;
+import com.volodya.libproject.domain.entities.Isbn;
 import com.volodya.libproject.presentation.requests.books.CreateBookRequest;
 import com.volodya.libproject.presentation.requests.books.PatchBookRequest;
 import jakarta.validation.constraints.Size;
@@ -25,7 +26,7 @@ public final class BookController {
         return new ResponseEntity<>(bookService.createBook(
             request.title(),
             request.author(),
-            request.isbn(),
+            Isbn.of(request.isbn()),
             request.publicationYear(),
             request.totalCopies(),
             request.availableCopies()
@@ -43,7 +44,7 @@ public final class BookController {
         @Size(min = 10, max = 13)
         String isbn
     ) {
-        return ResponseEntity.ok(bookService.getBookByIsbn(isbn));
+        return ResponseEntity.ok(bookService.getBookByIsbn(Isbn.of(isbn)));
     }
 
     @PatchMapping("/{id}")
@@ -55,7 +56,7 @@ public final class BookController {
             id,
             request.title(),
             request.author(),
-            request.isbn(),
+            Isbn.of(request.isbn()),
             request.publicationYear(),
             request.totalCopies(),
             request.availableCopies()

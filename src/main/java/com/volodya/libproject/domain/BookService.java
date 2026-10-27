@@ -1,6 +1,7 @@
 package com.volodya.libproject.domain;
 
 import com.volodya.libproject.domain.dto.BookDto;
+import com.volodya.libproject.domain.entities.Isbn;
 import com.volodya.libproject.domain.exceptions.BookNotFoundException;
 import com.volodya.libproject.infrastructure.entites.BookEntity;
 import com.volodya.libproject.infrastructure.mappers.BookDtoEntityMapper;
@@ -24,18 +25,16 @@ public class BookService {
     public BookDto createBook(
         String title,
         String author,
-        String isbn,
+        Isbn isbn,
         Year publicationYear,
         long totalCopies,
         long availableCopies
     ) {
-        checkIsbn(isbn);
-
         var book = new BookEntity(
             UUID.randomUUID(),
             title,
             author,
-            isbn,
+            isbn.value(),
             publicationYear,
             totalCopies,
             availableCopies
@@ -50,26 +49,21 @@ public class BookService {
             .orElseThrow(() -> new BookNotFoundException("id", id.toString()));
     }
 
-    public BookDto getBookByIsbn(String isbn) {
-        checkIsbn(isbn);
-        return bookJpaRepository.findByIsbn(isbn)
+    public BookDto getBookByIsbn(Isbn isbn) {
+        return bookJpaRepository.findByIsbn(isbn.value())
             .map(bookMapper::toDto)
-            .orElseThrow(() -> new BookNotFoundException("ISBN", isbn));
+            .orElseThrow(() -> new BookNotFoundException("ISBN", isbn.value()));
     }
 
     public BookDto patchBook(
         UUID id,
         @Nullable String title,
         @Nullable String author,
-        @Nullable String isbn,
+        @Nullable Isbn isbn,
         @Nullable Year publicationYear,
         @Nullable Long totalCopies,
         @Nullable Long availableCopies
     ) {
-        if (isbn != null) {
-            checkIsbn(isbn);
-        }
-
         var book = bookJpaRepository.findById(id)
             .orElseThrow(() -> new BookNotFoundException("id", id.toString()));
 
@@ -80,7 +74,7 @@ public class BookService {
             book.setAuthor(author);
         }
         if (isbn != null) {
-            book.setIsbn(isbn);
+            book.setIsbn(isbn.value());
         }
         if (publicationYear != null) {
             book.setPublicationYear(publicationYear);
@@ -99,11 +93,5 @@ public class BookService {
         var book = bookJpaRepository.findById(id)
             .orElseThrow(() -> new BookNotFoundException("id", id.toString()));
         bookJpaRepository.delete(book);
-    }
-
-    private void checkIsbn(String isbn) {
-        if (isbn.length() != 10 && isbn.length() != 13) {
-            throw new IllegalArgumentException("ISBN length is invalid");
-        }
     }
 }
