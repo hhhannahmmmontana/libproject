@@ -4,6 +4,7 @@ import com.volodya.libproject.domain.dto.ReaderDto;
 import com.volodya.libproject.domain.services.ReaderService;
 import com.volodya.libproject.presentation.requests.readers.CreateReaderRequest;
 import com.volodya.libproject.presentation.requests.readers.PatchReaderRequest;
+import jakarta.validation.Valid;
 import jakarta.websocket.server.PathParam;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -20,7 +21,7 @@ public final class ReaderController {
     private final ReaderService readerService;
 
     @PostMapping
-    public ResponseEntity<ReaderDto> createReader(@RequestBody CreateReaderRequest request) {
+    public ResponseEntity<ReaderDto> createReader(@Valid @RequestBody CreateReaderRequest request) {
         return new ResponseEntity<>(readerService.createReader(
             request.firstName(),
             request.lastName(),
@@ -37,7 +38,7 @@ public final class ReaderController {
     @PatchMapping("/{id}")
     public ResponseEntity<ReaderDto> patchReader(
         @PathParam("id") UUID id,
-        @RequestBody PatchReaderRequest request
+        @Valid @RequestBody PatchReaderRequest request
     ) {
         return ResponseEntity.ok(readerService.patchReader(
             id,

@@ -5,6 +5,7 @@ import com.volodya.libproject.domain.entities.Isbn;
 import com.volodya.libproject.domain.services.BookService;
 import com.volodya.libproject.presentation.requests.books.CreateBookRequest;
 import com.volodya.libproject.presentation.requests.books.PatchBookRequest;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.Size;
 import jakarta.websocket.server.PathParam;
 import lombok.RequiredArgsConstructor;
@@ -22,7 +23,7 @@ public final class BookController {
     private final BookService bookService;
 
     @PostMapping
-    public ResponseEntity<BookDto> createBook(@RequestBody CreateBookRequest request) {
+    public ResponseEntity<BookDto> createBook(@Valid @RequestBody CreateBookRequest request) {
         return new ResponseEntity<>(bookService.createBook(
             request.title(),
             request.author(),
@@ -50,7 +51,7 @@ public final class BookController {
     @PatchMapping("/{id}")
     public ResponseEntity<BookDto> patchBook(
         @PathParam("id") UUID id,
-        @RequestBody PatchBookRequest request
+        @Valid @RequestBody PatchBookRequest request
     ) {
         return ResponseEntity.ok(bookService.patchBook(
             id,

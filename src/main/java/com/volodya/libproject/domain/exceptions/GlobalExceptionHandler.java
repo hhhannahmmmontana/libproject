@@ -4,16 +4,33 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.time.Instant;
+import java.util.Arrays;
+import java.util.stream.Collectors;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
     @Value("${spring.application.name}")
     private String serviceName;
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<ErrorResponse> handleMethodArgumentNotValidException(
+        MethodArgumentNotValidException ex
+    ) {
+        return errorResponseFromException(
+            ex,
+            HttpStatus.BAD_REQUEST,
+            "Invalid argument(s): " + Arrays.stream(ex.getDetailMessageArguments())
+                .map(Object::toString)
+                .filter(message -> !message.isBlank())
+                .collect(Collectors.joining())
+        );
+    }
 
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ResponseEntity<ErrorResponse> handleDataIntegrityViolationException(
