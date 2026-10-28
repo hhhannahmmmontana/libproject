@@ -32,7 +32,7 @@ public final class ReaderController {
 
     @GetMapping("/{id}")
     public ResponseEntity<ReaderDto> getReaderById(@PathParam("id") UUID id) {
-        return ResponseEntity.ok(readerService.getReaderById(id));
+        return ResponseEntity.ok(readerService.getReaderDtoById(id));
     }
 
     @PatchMapping("/{id}")

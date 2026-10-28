@@ -18,6 +18,20 @@ public class GlobalExceptionHandler {
     @Value("${spring.application.name}")
     private String serviceName;
 
+    @ExceptionHandler(EntityNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleEntityNotFoundException(
+        EntityNotFoundException ex
+    ) {
+        return errorResponseFromException(ex, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(BookOutOfStockException.class)
+    public ResponseEntity<ErrorResponse> handleBookOutOfStockException(
+        BookOutOfStockException ex
+    ) {
+        return errorResponseFromException(ex, HttpStatus.BAD_REQUEST); // why no suitable http error....
+    }
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ErrorResponse> handleMethodArgumentNotValidException(
         MethodArgumentNotValidException ex

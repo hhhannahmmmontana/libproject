@@ -1,23 +1,17 @@
 package com.volodya.libproject.infrastructure.entites;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import org.springframework.data.annotation.Version;
+import jakarta.persistence.*;
+import lombok.*;
 
 import java.time.Year;
 import java.util.UUID;
 
 @Entity
 @Table(name = "books")
-@NoArgsConstructor
 @Getter
 @Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public final class BookEntity {
 
     @Id
@@ -50,8 +44,7 @@ public final class BookEntity {
         String author,
         String isbn,
         Year publicationYear,
-        long totalCopies,
-        long availableCopies
+        long totalCopies
     ) {
         this.id = id;
         this.title = title;
@@ -59,6 +52,6 @@ public final class BookEntity {
         this.isbn = isbn;
         this.publicationYear = publicationYear;
         this.totalCopies = totalCopies;
-        this.availableCopies = availableCopies;
+        this.availableCopies = totalCopies;
     }
 }

@@ -1,4 +1,4 @@
-package com.volodya.libproject.infrastructure.mappers;
+package com.volodya.libproject.domain.mappers;
 
 import com.volodya.libproject.domain.dto.BookDto;
 import com.volodya.libproject.infrastructure.entites.BookEntity;

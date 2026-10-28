@@ -29,14 +29,13 @@ public final class BookController {
             request.author(),
             Isbn.of(request.isbn()),
             request.publicationYear(),
-            request.totalCopies(),
-            request.availableCopies()
+            request.totalCopies()
         ), HttpStatus.CREATED);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<BookDto> getBookById(@PathParam("id") UUID id) {
-        return ResponseEntity.ok(bookService.getBookById(id));
+        return ResponseEntity.ok(bookService.getBookDtoById(id));
     }
 
     @GetMapping("/isbn/{isbn}")
@@ -45,7 +44,7 @@ public final class BookController {
         @Size(min = 10, max = 13)
         String isbn
     ) {
-        return ResponseEntity.ok(bookService.getBookByIsbn(Isbn.of(isbn)));
+        return ResponseEntity.ok(bookService.getBookDtoByIsbn(Isbn.of(isbn)));
     }
 
     @PatchMapping("/{id}")

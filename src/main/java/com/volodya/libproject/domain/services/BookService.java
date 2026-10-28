@@ -2,9 +2,9 @@ package com.volodya.libproject.domain.services;
 
 import com.volodya.libproject.domain.dto.BookDto;
 import com.volodya.libproject.domain.entities.Isbn;
-import com.volodya.libproject.domain.exceptions.BookNotFoundException;
+import com.volodya.libproject.domain.exceptions.EntityNotFoundException;
+import com.volodya.libproject.domain.mappers.BookDtoEntityMapper;
 import com.volodya.libproject.infrastructure.entites.BookEntity;
-import com.volodya.libproject.infrastructure.mappers.BookDtoEntityMapper;
 import com.volodya.libproject.infrastructure.repositories.BookJpaRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +19,8 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class BookService {
 
+    public final static String ENTITY_NAME = "Book";
+
     private final BookJpaRepository bookJpaRepository;
     private final BookDtoEntityMapper bookMapper;
 
@@ -27,8 +29,7 @@ public class BookService {
         String author,
         Isbn isbn,
         Year publicationYear,
-        long totalCopies,
-        long availableCopies
+        long totalCopies
     ) {
         var book = new BookEntity(
             UUID.randomUUID(),
@@ -36,23 +37,25 @@ public class BookService {
             author,
             isbn.value(),
             publicationYear,
-            totalCopies,
-            availableCopies
+            totalCopies
         );
 
         return bookMapper.toDto(bookJpaRepository.save(book));
     }
 
-    public BookDto getBookById(UUID id) {
+    BookEntity getBookEntityById(UUID id) {
         return bookJpaRepository.findById(id)
-            .map(bookMapper::toDto)
-            .orElseThrow(() -> new BookNotFoundException("id", id.toString()));
+            .orElseThrow(() -> new EntityNotFoundException(ENTITY_NAME, id));
     }
 
-    public BookDto getBookByIsbn(Isbn isbn) {
+    public BookDto getBookDtoById(UUID id) {
+        return bookMapper.toDto(getBookEntityById(id));
+    }
+
+    public BookDto getBookDtoByIsbn(Isbn isbn) {
         return bookJpaRepository.findByIsbn(isbn.value())
             .map(bookMapper::toDto)
-            .orElseThrow(() -> new BookNotFoundException("ISBN", isbn.value()));
+            .orElseThrow(() -> new EntityNotFoundException(ENTITY_NAME, "ISBN", isbn.value()));
     }
 
     public BookDto patchBook(
@@ -65,7 +68,7 @@ public class BookService {
         @Nullable Long availableCopies
     ) {
         var book = bookJpaRepository.findForUpdateById(id)
-            .orElseThrow(() -> new BookNotFoundException("id", id.toString()));
+            .orElseThrow(() -> new EntityNotFoundException(ENTITY_NAME, id));
 
         if (title != null) {
             book.setTitle(title);
@@ -90,8 +93,7 @@ public class BookService {
     }
 
     public void deleteBook(UUID id) {
-        var book = bookJpaRepository.findById(id)
-            .orElseThrow(() -> new BookNotFoundException("id", id.toString()));
+        var book = getBookEntityById(id);
         bookJpaRepository.delete(book);
     }
 }

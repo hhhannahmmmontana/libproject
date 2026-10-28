@@ -1,9 +1,9 @@
 package com.volodya.libproject.domain.services;
 
 import com.volodya.libproject.domain.dto.ReaderDto;
-import com.volodya.libproject.domain.exceptions.ReaderNotFoundException;
+import com.volodya.libproject.domain.exceptions.EntityNotFoundException;
+import com.volodya.libproject.domain.mappers.ReaderDtoEntityMapper;
 import com.volodya.libproject.infrastructure.entites.ReaderEntity;
-import com.volodya.libproject.infrastructure.mappers.ReaderDtoEntityMapper;
 import com.volodya.libproject.infrastructure.repositories.ReaderJpaRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +17,8 @@ import java.util.UUID;
 @Transactional
 @RequiredArgsConstructor
 public class ReaderService {
+
+    public final static String ENTITY_NAME = "Reader";
 
     private final ReaderJpaRepository readerJpaRepository;
     private final ReaderDtoEntityMapper readerMapper;
@@ -38,22 +40,25 @@ public class ReaderService {
         return readerMapper.toDto(readerJpaRepository.save(reader));
     }
 
-    public ReaderDto getReaderById(UUID id) {
+    ReaderEntity getReaderEntityById(UUID id) {
         return readerJpaRepository.findById(id)
-            .map(readerMapper::toDto)
-            .orElseThrow(() -> new ReaderNotFoundException("id", id.toString()));
+            .orElseThrow(() -> new EntityNotFoundException(ENTITY_NAME, id));
     }
 
-    public ReaderDto getReaderByEmail(String email) {
+    public ReaderDto getReaderDtoById(UUID id) {
+        return readerMapper.toDto(getReaderEntityById(id));
+    }
+
+    public ReaderDto getReaderDtoByEmail(String email) {
         return readerJpaRepository.findByEmail(email)
             .map(readerMapper::toDto)
-            .orElseThrow(() -> new ReaderNotFoundException("email", email));
+            .orElseThrow(() -> new EntityNotFoundException(ENTITY_NAME, "email", email));
     }
 
-    public ReaderDto getReaderByPhone(String phone) {
+    public ReaderDto getReaderDtoByPhone(String phone) {
         return readerJpaRepository.findByPhone(phone)
             .map(readerMapper::toDto)
-            .orElseThrow(() -> new ReaderNotFoundException("phone", phone));
+            .orElseThrow(() -> new EntityNotFoundException(ENTITY_NAME, "phone", phone));
     }
 
     public ReaderDto patchReader(
@@ -65,7 +70,7 @@ public class ReaderService {
         @Nullable Instant registrationDate
     ) {
         var reader = readerJpaRepository.findById(id)
-            .orElseThrow(() -> new ReaderNotFoundException("id", id.toString()));
+            .orElseThrow(() -> new EntityNotFoundException(ENTITY_NAME, id));
 
         if (firstName != null) {
             reader.setFirstName(firstName);
@@ -87,8 +92,7 @@ public class ReaderService {
     }
 
     public void deleteReader(UUID id) {
-        var reader = readerJpaRepository.findById(id)
-            .orElseThrow(() -> new ReaderNotFoundException("id", id.toString()));
+        var reader = getReaderEntityById(id);
         readerJpaRepository.delete(reader);
     }
 }

@@ -18,8 +18,5 @@ public record CreateBookRequest(
     Year publicationYear,
 
     @Min(0)
-    long totalCopies,
-
-    @Min(0)
-    long availableCopies
+    long totalCopies
 ) {}

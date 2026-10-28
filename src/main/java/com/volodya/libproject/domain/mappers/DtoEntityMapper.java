@@ -1,4 +1,4 @@
-package com.volodya.libproject.infrastructure.mappers;
+package com.volodya.libproject.domain.mappers;
 
 public interface DtoEntityMapper<D, E> {
 
