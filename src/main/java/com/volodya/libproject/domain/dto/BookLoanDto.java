@@ -1,5 +1,6 @@
 package com.volodya.libproject.domain.dto;
 
+import com.volodya.libproject.infrastructure.entites.enums.BookLoanStatus;
 import org.jspecify.annotations.Nullable;
 
 import java.time.Instant;
@@ -12,5 +13,5 @@ public record BookLoanDto(
     Instant loanDate,
     Instant dueDate,
     @Nullable Instant returnDate,
-    String status
+    BookLoanStatus status
 ) {}

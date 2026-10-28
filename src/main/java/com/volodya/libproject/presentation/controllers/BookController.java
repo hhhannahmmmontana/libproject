@@ -2,6 +2,8 @@ package com.volodya.libproject.presentation.controllers;
 
 import com.volodya.libproject.domain.dto.BookDto;
 import com.volodya.libproject.domain.entities.Isbn;
+import com.volodya.libproject.domain.pagination.PageData;
+import com.volodya.libproject.domain.pagination.PaginationTokenDirecton;
 import com.volodya.libproject.domain.services.BookService;
 import com.volodya.libproject.presentation.requests.books.CreateBookRequest;
 import com.volodya.libproject.presentation.requests.books.PatchBookRequest;
@@ -9,10 +11,13 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.Size;
 import jakarta.websocket.server.PathParam;
 import lombok.RequiredArgsConstructor;
+import org.jspecify.annotations.Nullable;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.Year;
 import java.util.UUID;
 
 @RestController
@@ -21,6 +26,9 @@ import java.util.UUID;
 public final class BookController {
 
     private final BookService bookService;
+
+    @Value("${services.books.default-page-size}")
+    private int defaultPageSize;
 
     @PostMapping
     public ResponseEntity<BookDto> createBook(@Valid @RequestBody CreateBookRequest request) {
@@ -39,12 +47,33 @@ public final class BookController {
     }
 
     @GetMapping("/isbn/{isbn}")
-    public ResponseEntity<BookDto> getBookById(
+    public ResponseEntity<BookDto> getBookByIsbn(
         @PathParam("isbn")
         @Size(min = 10, max = 13)
         String isbn
     ) {
         return ResponseEntity.ok(bookService.getBookDtoByIsbn(Isbn.of(isbn)));
+    }
+
+    @GetMapping
+    public ResponseEntity<PageData<BookDto>> findBooksByFilters(
+        @Nullable String title,
+        @Nullable String author,
+        @Nullable Year publicationYear,
+        @Nullable Boolean isAvailable,
+        @Nullable Integer pageSize,
+        @Nullable PaginationTokenDirecton direction,
+        @Nullable String token
+    ) {
+        return ResponseEntity.ok(bookService.findBooksByFilters(
+            title,
+            author,
+            publicationYear,
+            isAvailable,
+            (pageSize == null) ? defaultPageSize : pageSize,
+            (direction == null) ? PaginationTokenDirecton.FORWARD : direction,
+            token
+        ));
     }
 
     @PatchMapping("/{id}")

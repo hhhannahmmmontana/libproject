@@ -10,7 +10,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Repository
-public interface BookJpaRepository extends JpaRepository<BookEntity, UUID> {
+public interface BookJpaRepository extends JpaRepository<BookEntity, UUID>, BookCriteriaRepository {
 
     Optional<BookEntity> findByIsbn(String isbn);
 

@@ -7,5 +7,7 @@ CREATE TABLE books
     publication_year INT          NOT NULL,
     total_copies     BIGINT       NOT NULL,
     available_copies BIGINT       NOT NULL,
-    version          BIGINT       NOT NULL
+    version          BIGINT       NOT NULL,
+
+    CONSTRAINT uq_title_author UNIQUE (title, author)
 );

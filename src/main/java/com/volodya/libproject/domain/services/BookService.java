@@ -4,6 +4,9 @@ import com.volodya.libproject.domain.dto.BookDto;
 import com.volodya.libproject.domain.entities.Isbn;
 import com.volodya.libproject.domain.exceptions.EntityNotFoundException;
 import com.volodya.libproject.domain.mappers.BookDtoEntityMapper;
+import com.volodya.libproject.domain.pagination.PageData;
+import com.volodya.libproject.domain.pagination.PaginationTokenDirecton;
+import com.volodya.libproject.domain.pagination.PaginationTokenUtil;
 import com.volodya.libproject.infrastructure.entites.BookEntity;
 import com.volodya.libproject.infrastructure.repositories.BookJpaRepository;
 import jakarta.transaction.Transactional;
@@ -95,5 +98,36 @@ public class BookService {
     public void deleteBook(UUID id) {
         var book = getBookEntityById(id);
         bookJpaRepository.delete(book);
+    }
+
+    public PageData<BookDto> findBooksByFilters(
+        @Nullable String title,
+        @Nullable String author,
+        @Nullable Year publicationYear,
+        @Nullable Boolean isAvailable,
+        int pageSize,
+        PaginationTokenDirecton direction,
+        @Nullable String token
+    ) {
+        String cursor = null;
+        if (token != null) {
+            cursor = PaginationTokenUtil.decodeToken(token);
+        }
+
+        var result = bookJpaRepository.findBooksByFilters(
+            title,
+            author,
+            publicationYear,
+            isAvailable,
+            pageSize,
+            cursor,
+            direction
+        );
+
+        return new PageData<>(
+            result.getRight().size(),
+            (result.getLeft() != null) ? PaginationTokenUtil.encodeToken(result.getLeft()) : null,
+            result.getRight().stream().map(bookMapper::toDto).toList()
+        );
     }
 }
