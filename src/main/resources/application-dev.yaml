@@ -12,3 +12,6 @@ spring:
 services:
   books:
     default-page-size: 32
+
+data-population:
+  enabled: true

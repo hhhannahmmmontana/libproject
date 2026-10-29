@@ -13,7 +13,6 @@ import org.springframework.stereotype.Repository;
 import java.time.Year;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.BiFunction;
 import java.util.function.Function;
 
 @Repository
@@ -54,13 +53,24 @@ public class BookCriteriaRepositoryImpl implements BookCriteriaRepository {
         if (cursor != null) {
             var splitCursor = cursor.split(DELIMITER, 2);
 
-            BiFunction<Expression<String>, String, Predicate> func = onDirection(
-                cb::greaterThan,
-                cb::lessThan,
+            Predicate predicate = onDirection(
+                cb.and(
+                    cb.greaterThan(book.get("author"), splitCursor[0]),
+                    cb.or(
+                        cb.equal(book.get("author"), splitCursor[0]),
+                        cb.greaterThan(book.get("title"), splitCursor[1])
+                    )
+                ),
+                cb.or(
+                    cb.lessThan(book.get("author"), splitCursor[0]),
+                    cb.and(
+                        cb.equal(book.get("author"), splitCursor[0]),
+                        cb.lessThanOrEqualTo(book.get("title"), splitCursor[1])
+                    )
+                ),
                 direction
             );
-            predicates.add(func.apply(book.get("author"), splitCursor[0]));
-            predicates.add(func.apply(book.get("title"), splitCursor[1]));
+            predicates.add(predicate);
         }
 
         Function<Expression<String>, Order> orderType = onDirection(
@@ -76,7 +86,7 @@ public class BookCriteriaRepositoryImpl implements BookCriteriaRepository {
             )
         );
 
-        var result = q.getResultList();
+        var result = q.setMaxResults(pageSize).getResultList();
 
         String newCursor;
         if (result.isEmpty()) {
