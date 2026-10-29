@@ -47,7 +47,7 @@ public final class BookLoanController {
         return ResponseEntity.ok(bookLoanService.getReaderLoans(readerId));
     }
 
-    @GetMapping("/debtors")
+    @GetMapping("/overdue")
     public ResponseEntity<List<ReaderDto>> getDebtors() {
         return ResponseEntity.ok(bookLoanService.getDebtors());
     }

@@ -29,7 +29,14 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleBookOutOfStockException(
         BookOutOfStockException ex
     ) {
-        return errorResponseFromException(ex, HttpStatus.BAD_REQUEST); // why no suitable http error....
+        return errorResponseFromException(ex, HttpStatus.CONFLICT);
+    }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<ErrorResponse> handleIllegalArgumentException(
+        IllegalArgumentException ex
+    ) {
+        return errorResponseFromException(ex, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
