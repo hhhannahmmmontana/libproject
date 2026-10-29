@@ -2,9 +2,11 @@ package com.volodya.libproject.presentation.controllers;
 
 import com.volodya.libproject.domain.dto.ReaderDto;
 import com.volodya.libproject.domain.services.ReaderService;
+import com.volodya.libproject.presentation.annotations.PhoneNumber;
 import com.volodya.libproject.presentation.requests.readers.CreateReaderRequest;
 import com.volodya.libproject.presentation.requests.readers.PatchReaderRequest;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Email;
 import jakarta.websocket.server.PathParam;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -33,6 +35,16 @@ public final class ReaderController {
     @GetMapping("/{id}")
     public ResponseEntity<ReaderDto> getReaderById(@PathParam("id") UUID id) {
         return ResponseEntity.ok(readerService.getReaderDtoById(id));
+    }
+
+    @GetMapping("/email/{email}")
+    public ResponseEntity<ReaderDto> getReaderByEmail(@PathParam("email") @Email String email) {
+        return ResponseEntity.ok(readerService.getReaderDtoByEmail(email));
+    }
+
+    @GetMapping("/phone/{phone}")
+    public ResponseEntity<ReaderDto> getReaderByPhone(@PathParam("phone") @PhoneNumber String phone) {
+        return ResponseEntity.ok(readerService.getReaderDtoByPhone(phone));
     }
 
     @PatchMapping("/{id}")
