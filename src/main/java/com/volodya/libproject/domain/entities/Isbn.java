@@ -1,5 +1,7 @@
 package com.volodya.libproject.domain.entities;
 
+import lombok.NonNull;
+
 public record Isbn(
     String value
 ) {
@@ -16,5 +18,10 @@ public record Isbn(
     // i just like it that way))
     public static Isbn of(String value) {
         return new Isbn(value);
+    }
+
+    @Override
+    public @NonNull String toString() {
+        return this.value;
     }
 }

@@ -6,6 +6,7 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
 import jakarta.persistence.criteria.*;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jspecify.annotations.Nullable;
 import org.springframework.stereotype.Repository;
@@ -17,6 +18,7 @@ import java.util.function.Function;
 
 @Repository
 @RequiredArgsConstructor
+@Slf4j
 public class BookCriteriaRepositoryImpl implements BookCriteriaRepository {
 
     private final EntityManager em;
@@ -87,11 +89,10 @@ public class BookCriteriaRepositoryImpl implements BookCriteriaRepository {
         );
 
         var result = q.setMaxResults(pageSize).getResultList();
+        log.trace("query completed, data length: {}", result.size());
 
-        String newCursor;
-        if (result.isEmpty()) {
-            newCursor = cursor;
-        } else {
+        String newCursor = null;
+        if (!result.isEmpty()) {
             BookEntity cursorEntity = onDirection(
                 result.getLast(),
                 result.getFirst(),
@@ -99,6 +100,7 @@ public class BookCriteriaRepositoryImpl implements BookCriteriaRepository {
             );
             // db has unique constraints name + author so we don't need duplicates logic
             newCursor = cursorEntity.getAuthor() + DELIMITER + cursorEntity.getTitle();
+            log.trace("created new cursor, result {}", newCursor);
         }
 
         return Pair.of(newCursor, result);

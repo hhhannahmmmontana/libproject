@@ -7,15 +7,19 @@ import com.volodya.libproject.infrastructure.entites.ReaderEntity;
 import com.volodya.libproject.infrastructure.repositories.ReaderJpaRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.jspecify.annotations.Nullable;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 import java.util.UUID;
 
+import static com.volodya.libproject.domain.configuration.utils.MaskingUtil.maskData;
+
 @Service
 @Transactional
 @RequiredArgsConstructor
+@Slf4j
 public class ReaderService {
 
     public final static String ENTITY_NAME = "Reader";
@@ -29,6 +33,13 @@ public class ReaderService {
         String email,
         String phone
     ) {
+        log.debug(
+            "creating reader {} {}, email: {}, phone: {}",
+            maskData(firstName),
+            maskData(lastName),
+            maskData(email),
+            maskData(phone)
+        );
         var reader = new ReaderEntity(
             UUID.randomUUID(),
             firstName,
@@ -37,10 +48,13 @@ public class ReaderService {
             phone,
             Instant.now()
         );
-        return readerMapper.toDto(readerJpaRepository.save(reader));
+        reader = readerJpaRepository.save(reader);
+        log.info("reader {} created", reader.getId());
+        return readerMapper.toDto(reader);
     }
 
     ReaderEntity getReaderEntityById(UUID id) {
+        log.debug("searching for reader with id {}", id);
         return readerJpaRepository.findById(id)
             .orElseThrow(() -> new EntityNotFoundException(ENTITY_NAME, id));
     }
@@ -50,15 +64,21 @@ public class ReaderService {
     }
 
     public ReaderDto getReaderDtoByEmail(String email) {
-        return readerJpaRepository.findByEmail(email)
+        log.debug("searching for reader with email {}", maskData(email));
+        var reader = readerJpaRepository.findByEmail(email)
             .map(readerMapper::toDto)
             .orElseThrow(() -> new EntityNotFoundException(ENTITY_NAME, "email", email));
+        log.debug("reader with email {} found, id {}", maskData(email), reader.id());
+        return reader;
     }
 
     public ReaderDto getReaderDtoByPhone(String phone) {
-        return readerJpaRepository.findByPhone(phone)
+        log.debug("searching for reader with phone {}", maskData(phone));
+        var reader = readerJpaRepository.findByPhone(phone)
             .map(readerMapper::toDto)
             .orElseThrow(() -> new EntityNotFoundException(ENTITY_NAME, "phone", phone));
+        log.debug("reader with phone {} found, id {}", maskData(phone), reader.id());
+        return reader;
     }
 
     public ReaderDto patchReader(
@@ -69,30 +89,38 @@ public class ReaderService {
         @Nullable String phone,
         @Nullable Instant registrationDate
     ) {
-        var reader = readerJpaRepository.findById(id)
-            .orElseThrow(() -> new EntityNotFoundException(ENTITY_NAME, id));
+        log.debug("patching reader {}", id);
+        var reader = getReaderEntityById(id);
 
         if (firstName != null) {
             reader.setFirstName(firstName);
+            log.trace("{} reader's first name set to {}", id, maskData(firstName));
         }
         if (lastName != null) {
             reader.setLastName(lastName);
+            log.trace("{} reader's last name set to {}", id, maskData(lastName));
         }
         if (email != null) {
             reader.setEmail(email);
+            log.trace("{} reader's email set to {}", id, maskData(email));
         }
         if (phone != null) {
             reader.setPhone(phone);
+            log.trace("{} reader's phone set to {}", id, maskData(phone));
         }
         if (registrationDate != null) {
             reader.setRegistrationDate(registrationDate);
+            log.trace("{} reader's registration date set to {}", id, registrationDate);
         }
 
+        log.info("reader {} patched", id);
         return readerMapper.toDto(reader);
     }
 
     public void deleteReader(UUID id) {
+        log.debug("reader {} is being deleted", id);
         var reader = getReaderEntityById(id);
         readerJpaRepository.delete(reader);
+        log.info("deleted reader {}", id);
     }
 }

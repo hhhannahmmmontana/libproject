@@ -7,7 +7,9 @@ spring:
 
   jpa:
     hibernate:
+      format-sql: true
       ddl-auto: validate
+    show-sql: true
 
 services:
   books:
@@ -15,3 +17,10 @@ services:
 
 data-population:
   enabled: true
+
+logging:
+  level:
+    com.volodya.libproject: TRACE
+    org.hibernate.SQL: DEBUG
+    org.hibernate.orm.jdbc.bind: DEBUG
+    org.springframework: INFO

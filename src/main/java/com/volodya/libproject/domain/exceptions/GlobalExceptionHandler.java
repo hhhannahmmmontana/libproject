@@ -1,5 +1,6 @@
 package com.volodya.libproject.domain.exceptions;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
@@ -13,6 +14,7 @@ import java.util.Arrays;
 import java.util.stream.Collectors;
 
 @RestControllerAdvice
+@Slf4j
 public class GlobalExceptionHandler {
 
     @Value("${spring.application.name}")
@@ -72,6 +74,7 @@ public class GlobalExceptionHandler {
     private ResponseEntity<ErrorResponse> errorResponseFromException(
         Exception ex, HttpStatus httpStatus, String message
     ) {
+        log.error("error occurred", ex);
         return new ResponseEntity<>(new ErrorResponse(
             serviceName,
             httpStatus.name(),
