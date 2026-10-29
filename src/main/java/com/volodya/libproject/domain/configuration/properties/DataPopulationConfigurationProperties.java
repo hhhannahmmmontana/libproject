@@ -25,6 +25,8 @@ public final class DataPopulationConfigurationProperties {
     public void init() {
         if (enabled && dataAmount == null) {
             dataAmount = new DataAmount();
+        } else if (!enabled) {
+            dataAmount = null;
         }
     }
 

@@ -27,7 +27,7 @@ import java.util.ArrayList;
 @Component
 @Profile("!prod")
 @RequiredArgsConstructor
-public class DataPopulationInitializer implements ApplicationRunner {
+public final class DataPopulationInitializer implements ApplicationRunner {
 
     private final DataPopulationConfigurationProperties configurationProperties;
     private final BookService bookService;
