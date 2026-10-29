@@ -1,1 +1,4 @@
-spring.application.name: Library Management Service
+spring.application.name: library-ms
+
+services.books.default-page-size: 32
+jpa.hibernate.ddl-auto: validate

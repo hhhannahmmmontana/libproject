@@ -1,8 +1,8 @@
 package com.volodya.libproject.infrastructure.repositories;
 
 import com.volodya.libproject.domain.pagination.PaginationTokenDirecton;
+import com.volodya.libproject.extras.Pair;
 import com.volodya.libproject.infrastructure.entites.BookEntity;
-import org.apache.commons.lang3.tuple.Pair;
 import org.jspecify.annotations.Nullable;
 
 import java.time.Year;

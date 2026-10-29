@@ -6,21 +6,8 @@ spring:
     password: password
 
   jpa:
-    hibernate:
-      format-sql: true
-      ddl-auto: validate
+    hibernate.format-sql: true
     show-sql: true
 
-services:
-  books:
-    default-page-size: 32
-
-data-population:
-  enabled: true
-
-logging:
-  level:
-    com.volodya.libproject: TRACE
-    org.hibernate.SQL: DEBUG
-    org.hibernate.orm.jdbc.bind: DEBUG
-    org.springframework: INFO
+services.books.default-page-size: 32
+data-population.enabled: true

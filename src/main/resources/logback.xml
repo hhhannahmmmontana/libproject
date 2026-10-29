@@ -1,0 +1,48 @@
+<configuration>
+    <springProperty scope="context" name="APP_NAME" source="spring.application.name"/>
+    <property name="DEFAULT_LOG_PATTERN"
+              value="%date{dd.MM.yyyy HH:mm:ss.SSS} %level [${APP_NAME}, %thread] %class: %message%n"/>
+    <property name="PROD_LOG_PATTERN" value="asd"/>
+
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <springProfile name="!prod">
+            <encoder>
+                <pattern>${DEFAULT_LOG_PATTERN}</pattern>
+            </encoder>
+        </springProfile>
+        <springProfile name="prod">
+        </springProfile>
+    </appender>
+
+    /* it's not specified it should be size rotated so screw it */
+    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>logs/log-%d{dd-MM-yyyy}.txt</fileNamePattern>
+            <maxHistory>30</maxHistory>
+        </rollingPolicy>
+        <springProfile name="!prod">
+            <encoder>
+                <pattern>${DEFAULT_LOG_PATTERN}</pattern>
+            </encoder>
+        </springProfile>
+        <springProfile name="prod">
+        </springProfile>
+    </appender>
+
+    <root level="INFO">
+        <appender-ref ref="CONSOLE"/>
+        <appender-ref ref="FILE"/>
+    </root>
+
+    <springProfile name="dev">
+        <logger name="com.volodya.libproject" level="DEBUG"/>
+    </springProfile>
+
+    <springProfile name="int">
+        <logger name="com.volodya.libproject" level="DEBUG"/>
+    </springProfile>
+
+    <springProfile name="prod">
+        <logger name="com.volodya.libproject" level="INFO"/>
+    </springProfile>
+</configuration>

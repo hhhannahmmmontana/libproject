@@ -148,11 +148,11 @@ public class BookService {
             direction
         );
 
-        log.debug("books found: amount - {}, new token - {}", result.getRight().size(), result.getLeft());
+        log.debug("books found: amount - {}, new token - {}", result.second().size(), result.first());
         return new PageData<>(
-            result.getRight().size(),
-            (result.getLeft() != null) ? PaginationTokenUtil.encodeToken(result.getLeft()) : null,
-            result.getRight().stream().map(bookMapper::toDto).toList()
+            result.second().size(),
+            (result.first() != null) ? PaginationTokenUtil.encodeToken(result.first()) : null,
+            result.second().stream().map(bookMapper::toDto).toList()
         );
     }
 }

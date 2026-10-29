@@ -1,13 +1,13 @@
 package com.volodya.libproject.infrastructure.repositories;
 
 import com.volodya.libproject.domain.pagination.PaginationTokenDirecton;
+import com.volodya.libproject.extras.Pair;
 import com.volodya.libproject.infrastructure.entites.BookEntity;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
 import jakarta.persistence.criteria.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.tuple.Pair;
 import org.jspecify.annotations.Nullable;
 import org.springframework.stereotype.Repository;
 
