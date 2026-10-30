@@ -14,7 +14,7 @@
         </springProfile>
     </appender>
 
-    /* it's not specified it should be size rotated so screw it */
+    /* it's not specified it should be size rolling so screw it */
     <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <fileNamePattern>logs/log-%d{dd-MM-yyyy}.txt</fileNamePattern>
