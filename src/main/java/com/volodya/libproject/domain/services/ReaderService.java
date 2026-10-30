@@ -3,6 +3,7 @@ package com.volodya.libproject.domain.services;
 import com.volodya.libproject.domain.dto.ReaderDto;
 import com.volodya.libproject.domain.exceptions.EntityNotFoundException;
 import com.volodya.libproject.domain.mappers.ReaderDtoEntityMapper;
+import com.volodya.libproject.extras.TimerRunner;
 import com.volodya.libproject.infrastructure.entites.ReaderEntity;
 import com.volodya.libproject.infrastructure.repositories.ReaderJpaRepository;
 import jakarta.transaction.Transactional;
@@ -12,6 +13,7 @@ import org.jspecify.annotations.Nullable;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
+import java.util.List;
 import java.util.UUID;
 
 import static com.volodya.libproject.domain.configuration.utils.MaskingUtil.maskData;
@@ -57,6 +59,41 @@ public class ReaderService {
         log.debug("searching for reader with id {}", id);
         return readerJpaRepository.findById(id)
             .orElseThrow(() -> new EntityNotFoundException(ENTITY_NAME, id));
+    }
+
+    /**
+     * only used in data population
+     */
+    public List<ReaderDto> getAllReaders() {
+        log.debug("getting all readers");
+
+        var result = TimerRunner.supply(() -> readerJpaRepository.findAll()
+            .stream()
+            .map(readerMapper::toDto)
+            .toList());
+
+        log.info(
+            "got all books, current amount {} (took {} ms)",
+            result.data().size(),
+            result.timeMs()
+        );
+        return result.data();
+    }
+
+    /**
+     * only used in data population
+     */
+    public long countReaders() {
+        log.debug("counting readers");
+
+        var result = TimerRunner.supply(readerJpaRepository::count);
+
+        log.info(
+            "readers counted, amount: {} (took {} ms)",
+            result.data(),
+            result.timeMs()
+        );
+        return result.data();
     }
 
     public ReaderDto getReaderDtoById(UUID id) {

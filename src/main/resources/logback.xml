@@ -11,6 +11,7 @@
             </encoder>
         </springProfile>
         <springProfile name="prod">
+            <encoder class="ch.qos.logback.classic.encoder.JsonEncoder"/>
         </springProfile>
     </appender>
 
@@ -26,6 +27,7 @@
             </encoder>
         </springProfile>
         <springProfile name="prod">
+            <encoder class="ch.qos.logback.classic.encoder.JsonEncoder"/>
         </springProfile>
     </appender>
 
@@ -39,10 +41,11 @@
     </springProfile>
 
     <springProfile name="int">
-        <logger name="com.volodya.libproject" level="DEBUG"/>
+        <logger name="com.volodya.libproject" level="INFO"/>
     </springProfile>
 
     <springProfile name="prod">
+        <root level="WARN"/>
         <logger name="com.volodya.libproject" level="INFO"/>
     </springProfile>
 </configuration>

@@ -5,6 +5,7 @@ import com.volodya.libproject.domain.dto.ReaderDto;
 import com.volodya.libproject.domain.exceptions.BookOutOfStockException;
 import com.volodya.libproject.domain.exceptions.EntityNotFoundException;
 import com.volodya.libproject.domain.mappers.BookLoanDtoEntityMapper;
+import com.volodya.libproject.extras.TimerRunner;
 import com.volodya.libproject.infrastructure.entites.BookLoanEntity;
 import com.volodya.libproject.infrastructure.entites.enums.BookLoanStatus;
 import com.volodya.libproject.infrastructure.repositories.BookLoanJpaRepository;
@@ -56,6 +57,22 @@ public class BookLoanService {
         log.debug("searching for book loan {}", id);
         return bookLoanJpaRepository.findById(id)
             .orElseThrow(() -> new EntityNotFoundException(ENTITY_NAME, id));
+    }
+
+    /**
+     * only used in data population
+     */
+    public long countBookLoans() {
+        log.debug("counting book loans");
+
+        var result = TimerRunner.supply(bookLoanJpaRepository::count);
+
+        log.info(
+            "book loans counted, amount: {} (took {} ms)",
+            result.data(),
+            result.timeMs()
+        );
+        return result.data();
     }
 
     public BookLoanDto getBookLoanDtoById(UUID id) {

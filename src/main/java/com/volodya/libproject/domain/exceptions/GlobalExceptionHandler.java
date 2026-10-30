@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import java.time.Instant;
 import java.util.Arrays;
@@ -24,6 +25,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleEntityNotFoundException(
         EntityNotFoundException ex
     ) {
+        log.debug("entity not found", ex);
         return errorResponseFromException(ex, HttpStatus.NOT_FOUND);
     }
 
@@ -31,13 +33,23 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleBookOutOfStockException(
         BookOutOfStockException ex
     ) {
+        log.debug("book doesn't exist", ex);
         return errorResponseFromException(ex, HttpStatus.CONFLICT);
+    }
+
+    @ExceptionHandler(NoResourceFoundException.class)
+    public ResponseEntity<ErrorResponse> handleNoResourceFoundException(
+        NoResourceFoundException ex
+    ) {
+        log.debug("resource not found", ex);
+        return errorResponseFromException(ex, HttpStatus.NOT_FOUND, "path doesn't exist: " + ex.getResourcePath());
     }
 
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<ErrorResponse> handleIllegalArgumentException(
         IllegalArgumentException ex
     ) {
+        log.debug("invalid argument", ex);
         return errorResponseFromException(ex, HttpStatus.BAD_REQUEST);
     }
 
@@ -45,6 +57,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleMethodArgumentNotValidException(
         MethodArgumentNotValidException ex
     ) {
+        log.debug("invalid argument", ex);
         return errorResponseFromException(
             ex,
             HttpStatus.BAD_REQUEST,
@@ -59,11 +72,13 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleDataIntegrityViolationException(
         DataIntegrityViolationException ex
     ) {
+        log.debug("integrity violation", ex);
         return errorResponseFromException(ex, HttpStatus.CONFLICT, "Entity already exists");
     }
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleException(Exception ex) {
+        log.error("error occurred", ex);
         return errorResponseFromException(ex, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
@@ -74,7 +89,6 @@ public class GlobalExceptionHandler {
     private ResponseEntity<ErrorResponse> errorResponseFromException(
         Exception ex, HttpStatus httpStatus, String message
     ) {
-        log.error("error occurred", ex);
         return new ResponseEntity<>(new ErrorResponse(
             serviceName,
             httpStatus.name(),

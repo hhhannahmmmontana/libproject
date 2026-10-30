@@ -5,5 +5,10 @@ spring:
     username: postgres
     password: postgres
 
-services.books.default-page-size: 32
-data-population.enabled: true
+data-population:
+  enabled: true
+  strategy: append-if-less
+  data-amount:
+    books: 1500
+    readers: 1500
+    book-loans: 1500

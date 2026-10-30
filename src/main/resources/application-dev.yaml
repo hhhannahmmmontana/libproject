@@ -9,5 +9,10 @@ spring:
     hibernate.format-sql: true
     show-sql: true
 
-services.books.default-page-size: 32
-data-population.enabled: true
+data-population:
+  enabled: true
+  strategy: empty-only
+  data-amount:
+    books: 300
+    readers: 300
+    book-loans: 300

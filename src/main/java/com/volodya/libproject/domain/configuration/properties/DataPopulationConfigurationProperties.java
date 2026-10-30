@@ -1,7 +1,5 @@
 package com.volodya.libproject.domain.configuration.properties;
 
-import jakarta.annotation.Nullable;
-import jakarta.annotation.PostConstruct;
 import jakarta.validation.constraints.Min;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -19,16 +17,8 @@ import org.springframework.validation.annotation.Validated;
 public final class DataPopulationConfigurationProperties {
 
     private boolean enabled = false;
-    private @Nullable DataAmount dataAmount = null;
-
-    @PostConstruct
-    public void init() {
-        if (enabled && dataAmount == null) {
-            dataAmount = new DataAmount();
-        } else if (!enabled) {
-            dataAmount = null;
-        }
-    }
+    private DataPopulationStrategy strategy = DataPopulationStrategy.EMPTY_ONLY;
+    private DataAmount dataAmount = new DataAmount();
 
     @Data
     public static class DataAmount {

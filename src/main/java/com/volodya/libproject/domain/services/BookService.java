@@ -7,6 +7,7 @@ import com.volodya.libproject.domain.mappers.BookDtoEntityMapper;
 import com.volodya.libproject.domain.pagination.PageData;
 import com.volodya.libproject.domain.pagination.PaginationTokenDirecton;
 import com.volodya.libproject.domain.pagination.PaginationTokenUtil;
+import com.volodya.libproject.extras.TimerRunner;
 import com.volodya.libproject.infrastructure.entites.BookEntity;
 import com.volodya.libproject.infrastructure.repositories.BookJpaRepository;
 import jakarta.transaction.Transactional;
@@ -16,6 +17,7 @@ import org.jspecify.annotations.Nullable;
 import org.springframework.stereotype.Service;
 
 import java.time.Year;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -55,6 +57,41 @@ public class BookService {
         log.debug("searching for book with id {}", id);
         return bookJpaRepository.findById(id)
             .orElseThrow(() -> new EntityNotFoundException(ENTITY_NAME, id));
+    }
+
+    /**
+     * only used in data population
+     */
+    public List<BookDto> getAllBooks() {
+        log.debug("getting all books");
+
+        var result = TimerRunner.supply(() -> bookJpaRepository.findAll()
+            .stream()
+            .map(bookMapper::toDto)
+            .toList());
+
+        log.info(
+            "got all books, current amount {} (took {} ms)",
+            result.data().size(),
+            result.timeMs()
+        );
+        return result.data();
+    }
+
+    /**
+     * only used in data population
+     */
+    public long countBooks() {
+        log.debug("counting books");
+
+        var result = TimerRunner.supply(bookJpaRepository::count);
+
+        log.info(
+            "books counted, amount: {} (took {} ms)",
+            result.data(),
+            result.timeMs()
+        );
+        return result.data();
     }
 
     public BookDto getBookDtoById(UUID id) {

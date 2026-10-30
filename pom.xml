@@ -10,12 +10,13 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <main-class.name>com.volodya.libproject.Application</main-class.name>
         <application.profile/>
 
         <maven.compiler.release>25</maven.compiler.release>
         <maven.compiler.version>3.15.0</maven.compiler.version>
         <maven.exec.version>3.6.3</maven.exec.version>
-        <maven.exec.mainClass>com.volodya.libproject.Application</maven.exec.mainClass>
+        <maven.exec.mainClass>${main-class.name}</maven.exec.mainClass>
 
         <lombok.version>1.18.48</lombok.version>
         <spring.boot.version>4.1.2</spring.boot.version>
@@ -40,21 +41,15 @@
             </properties>
             <dependencies>
                 <dependency>
-                    <groupId>org.springdoc</groupId>
-                    <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
-                    <version>${springdoc.version}</version>
-                    <scope>runtime</scope>
-                </dependency>
-                <dependency>
                     <groupId>com.h2database</groupId>
                     <artifactId>h2</artifactId>
                     <version>${h2.version}</version>
                     <scope>runtime</scope>
                 </dependency>
                 <dependency>
-                    <groupId>org.flywaydb</groupId>
-                    <artifactId>flyway-database-postgresql</artifactId>
-                    <version>${flyway.postgresql.version}</version>
+                    <groupId>org.springdoc</groupId>
+                    <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+                    <version>${springdoc.version}</version>
                     <scope>runtime</scope>
                 </dependency>
             </dependencies>
@@ -66,12 +61,6 @@
             </properties>
             <dependencies>
                 <dependency>
-                    <groupId>org.springdoc</groupId>
-                    <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
-                    <version>${springdoc.version}</version>
-                    <scope>runtime</scope>
-                </dependency>
-                <dependency>
                     <groupId>org.postgresql</groupId>
                     <artifactId>postgresql</artifactId>
                     <version>${postgresql.version}</version>
@@ -81,6 +70,12 @@
                     <groupId>org.flywaydb</groupId>
                     <artifactId>flyway-database-postgresql</artifactId>
                     <version>${flyway.postgresql.version}</version>
+                    <scope>runtime</scope>
+                </dependency>
+                <dependency>
+                    <groupId>org.springdoc</groupId>
+                    <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+                    <version>${springdoc.version}</version>
                     <scope>runtime</scope>
                 </dependency>
             </dependencies>
@@ -95,6 +90,12 @@
                     <groupId>org.postgresql</groupId>
                     <artifactId>postgresql</artifactId>
                     <version>${postgresql.version}</version>
+                    <scope>runtime</scope>
+                </dependency>
+                <dependency>
+                    <groupId>org.flywaydb</groupId>
+                    <artifactId>flyway-database-postgresql</artifactId>
+                    <version>${flyway.postgresql.version}</version>
                     <scope>runtime</scope>
                 </dependency>
             </dependencies>
@@ -171,7 +172,18 @@
                     </annotationProcessorPaths>
                 </configuration>
             </plugin>
-
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <addClasspath>true</addClasspath>
+                            <mainClass>${main-class.name}</mainClass>
+                        </manifest>
+                    </archive>
+                </configuration>
+            </plugin>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
@@ -181,6 +193,13 @@
                         <profile>${application.profile}</profile>
                     </profiles>
                 </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>repackage</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>

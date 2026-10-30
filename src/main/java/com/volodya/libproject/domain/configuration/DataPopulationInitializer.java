@@ -1,6 +1,7 @@
 package com.volodya.libproject.domain.configuration;
 
 import com.volodya.libproject.domain.configuration.properties.DataPopulationConfigurationProperties;
+import com.volodya.libproject.domain.configuration.properties.DataPopulationStrategy;
 import com.volodya.libproject.domain.dto.BookDto;
 import com.volodya.libproject.domain.dto.ReaderDto;
 import com.volodya.libproject.domain.entities.Isbn;
@@ -10,6 +11,7 @@ import com.volodya.libproject.domain.services.BookLoanService;
 import com.volodya.libproject.domain.services.BookService;
 import com.volodya.libproject.domain.services.ReaderService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import net.datafaker.Faker;
 import org.jspecify.annotations.NonNull;
 import org.springframework.boot.ApplicationArguments;
@@ -27,6 +29,7 @@ import java.util.ArrayList;
 @Component
 @Profile("!prod")
 @RequiredArgsConstructor
+@Slf4j
 public final class DataPopulationInitializer implements ApplicationRunner {
 
     private final DataPopulationConfigurationProperties configurationProperties;
@@ -35,16 +38,32 @@ public final class DataPopulationInitializer implements ApplicationRunner {
     private final BookLoanService bookLoanService;
 
     @Override
-    public void run(@NonNull ApplicationArguments args) throws Exception {
+    public void run(@NonNull ApplicationArguments args) {
         if (!configurationProperties.isEnabled()) {
             return;
         }
-        assert configurationProperties.getDataAmount() != null;
+
+        log.info("starting data population");
         var faker = new Faker();
 
+        var persistentBooksAmount = bookService.countBooks();
+        var persistentReadersAmount = readerService.countReaders();
+        var persistentBookLoansAmount = bookLoanService.countBookLoans();
+
+        if (configurationProperties.getStrategy() == DataPopulationStrategy.EMPTY_ONLY) {
+            if (persistentBooksAmount != 0 || persistentReadersAmount != 0 || persistentBookLoansAmount != 0) {
+                log.warn("database is not empty, stopping data population (strategy: empty-only)");
+                return;
+            }
+        }
+
+        log.debug("populating books");
         var booksAmount = configurationProperties.getDataAmount().getBooks();
         var books = new ArrayList<BookDto>(booksAmount);
-        for (int i = 0; i < booksAmount; ++i) {
+        if (persistentBooksAmount > 0) {
+            books.addAll(bookService.getAllBooks());
+        }
+        for (long i = persistentBooksAmount; i < booksAmount; ++i) {
             books.add(bookService.createBook(
                 faker.book().title(),
                 faker.book().author(),
@@ -53,10 +72,15 @@ public final class DataPopulationInitializer implements ApplicationRunner {
                 faker.number().numberBetween(0, 100)
             ));
         }
+        log.info("books populated, total added data: {}", booksAmount - persistentBooksAmount);
 
+        log.debug("populating readers");
         var readersAmount = configurationProperties.getDataAmount().getReaders();
         var readers = new ArrayList<ReaderDto>(readersAmount);
-        for (int i = 0; i < readersAmount; ++i) {
+        if (persistentReadersAmount > 0) {
+            readers.addAll(readerService.getAllReaders());
+        }
+        for (long i = persistentReadersAmount; i < readersAmount; ++i) {
             try {
                 readers.add(readerService.createReader(
                     faker.name().firstName(),
@@ -68,13 +92,15 @@ public final class DataPopulationInitializer implements ApplicationRunner {
                 --i;
             }
         }
+        log.info("readers populated, total added data: {}", readersAmount - persistentReadersAmount);
 
+        log.debug("populating book loans");
         var bookLoansAmount = configurationProperties.getDataAmount().getBookLoans();
         if (bookLoansAmount > 0 && (booksAmount < 1 || readersAmount < 1)) {
             throw new DataPopulationException("To populate book loans db must contain at least 1 book and 1 reader");
         }
 
-        for (int i = 0; i < bookLoansAmount; ++i) {
+        for (long i = persistentBookLoansAmount; i < bookLoansAmount; ++i) {
             try {
                 bookLoanService.createBookLoan(
                     faker.options().option(books.toArray(BookDto[]::new)).id(),
@@ -88,5 +114,8 @@ public final class DataPopulationInitializer implements ApplicationRunner {
                 --i;
             }
         }
+        log.info("book loans populated, total added data: {}", bookLoansAmount - persistentBookLoansAmount);
+
+        log.info("finished data population");
     }
 }

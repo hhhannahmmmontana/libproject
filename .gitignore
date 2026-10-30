@@ -4,3 +4,4 @@ target
 .kotlin
 .idea
 logs
+.env
