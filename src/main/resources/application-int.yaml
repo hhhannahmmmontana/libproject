@@ -12,3 +12,12 @@ data-population:
     books: 1500
     readers: 1500
     book-loans: 1500
+
+management:
+  endpoints:
+    web.exposure.include: "health,metrics,info,prometheus"
+  endpoint.health.show-details: always
+  info:
+    git.mode: full
+    env.enabled: true
+    build.enabled: true

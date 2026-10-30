@@ -1,4 +1,6 @@
-spring.application.name: library-ms
+spring:
+  application.name: library-ms
+  datasource.hikari.connection-timeout: 2000
 
 services.books.default-page-size: 32
 jpa.hibernate.ddl-auto: validate

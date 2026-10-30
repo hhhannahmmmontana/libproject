@@ -10,15 +10,13 @@
             </encoder>
         </springProfile>
         <springProfile name="prod">
-            <included>
-                <encoder class="ch.qos.logback.classic.encoder.JsonEncoder">
-                    <withSequenceNumber>false</withSequenceNumber>
-                    <withNanoseconds>false</withNanoseconds>
-                    <withArguments>false</withArguments>
-                    <withMessage>false</withMessage>
-                    <withFormattedMessage>true</withFormattedMessage>
-                </encoder>
-            </included>
+            <encoder class="ch.qos.logback.classic.encoder.JsonEncoder">
+                <withSequenceNumber>false</withSequenceNumber>
+                <withNanoseconds>false</withNanoseconds>
+                <withArguments>false</withArguments>
+                <withMessage>false</withMessage>
+                <withFormattedMessage>true</withFormattedMessage>
+            </encoder>
         </springProfile>
     </appender>
 
@@ -34,15 +32,13 @@
             </encoder>
         </springProfile>
         <springProfile name="prod">
-            <included>
-                <encoder class="ch.qos.logback.classic.encoder.JsonEncoder">
-                    <withSequenceNumber>false</withSequenceNumber>
-                    <withNanoseconds>false</withNanoseconds>
-                    <withArguments>false</withArguments>
-                    <withMessage>false</withMessage>
-                    <withFormattedMessage>true</withFormattedMessage>
-                </encoder>
-            </included>
+            <encoder class="ch.qos.logback.classic.encoder.JsonEncoder">
+                <withSequenceNumber>false</withSequenceNumber>
+                <withNanoseconds>false</withNanoseconds>
+                <withArguments>false</withArguments>
+                <withMessage>false</withMessage>
+                <withFormattedMessage>true</withFormattedMessage>
+            </encoder>
         </springProfile>
     </appender>
 

@@ -16,3 +16,10 @@ data-population:
     books: 300
     readers: 300
     book-loans: 300
+
+management:
+  endpoints:
+    web.exposure.include: "*"
+  endpoint:
+    health.show-details: always
+    heapdump.enabled: true
