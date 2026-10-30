@@ -102,7 +102,7 @@ public final class DataPopulationInitializer implements ApplicationRunner {
 
         for (long i = persistentBookLoansAmount; i < bookLoansAmount; ++i) {
             try {
-                bookLoanService.createBookLoan(
+                var loan = bookLoanService.createBookLoan(
                     faker.options().option(books.toArray(BookDto[]::new)).id(),
                     faker.options().nextElement(readers.toArray(ReaderDto[]::new)).id(),
                     faker.timeAndDate().between(
@@ -110,6 +110,9 @@ public final class DataPopulationInitializer implements ApplicationRunner {
                         Instant.now().plus(5 * 365, ChronoUnit.DAYS)
                     )
                 );
+                if (faker.random().nextBoolean()) {
+                    bookLoanService.returnBook(loan.id());
+                }
             } catch (BookOutOfStockException ex) {
                 --i;
             }
