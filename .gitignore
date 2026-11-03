@@ -2,3 +2,4 @@ target/
 .kotlin/
 .idea/
 /tomcat.*/
+logs
